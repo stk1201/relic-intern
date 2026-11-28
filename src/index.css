@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ネイビー（信頼・将来）× アンバー（目標・灯り） */
+    --background: 40 33% 98%;
+    --foreground: 228 40% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 228 40% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 228 40% 14%;
+    --primary: 228 50% 24%;
+    --primary-foreground: 40 33% 98%;
+    --secondary: 228 30% 94%;
+    --secondary-foreground: 228 50% 24%;
+    --accent: 38 91% 55%;
+    --accent-foreground: 228 50% 14%;
+    --muted: 40 20% 94%;
+    --muted-foreground: 228 12% 42%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 228 20% 88%;
+    --input: 228 20% 88%;
+    --ring: 228 50% 40%;
+    --radius: 0.875rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: 'palt';
+  }
+  h1, h2, h3 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer utilities {
+  .bg-grid {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.6) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.6) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
