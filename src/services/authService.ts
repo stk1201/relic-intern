@@ -18,23 +18,31 @@ export const authService = {
     return storage.get<AppUser | null>(KEY, null)
   },
 
-  async signUp(email: string, _password: string, nickname: string): Promise<AppUser> {
+  async signUp(email: string, _password: string, nickname: string, universityCode = ''): Promise<AppUser> {
     await sleep(700)
-    const user: AppUser = { id: uid(), email, nickname: nickname || email.split('@')[0], graduationYear: null }
+    const user: AppUser = {
+      id: uid(),
+      email,
+      nickname: nickname || email.split('@')[0],
+      graduationYear: null,
+      // モック：コードが入力されたらデモ大学に所属させる（本番は universities.invite_code で照合）
+      universityName: universityCode.trim() ? 'サンプル大学（デモ）' : null,
+      shareWithCareerCenter: false,
+    }
     storage.set(KEY, user)
     return user
   },
 
   async signIn(email: string, _password: string): Promise<AppUser> {
     await sleep(700)
-    const user: AppUser = { id: uid(), email, nickname: email.split('@')[0], graduationYear: null }
+    const user: AppUser = { id: uid(), email, nickname: email.split('@')[0], graduationYear: null, universityName: null, shareWithCareerCenter: false }
     storage.set(KEY, user)
     return user
   },
 
   async signInWithGoogle(): Promise<AppUser> {
     await sleep(700)
-    const user: AppUser = { id: uid(), email: 'demo@example.com', nickname: 'ゲスト', graduationYear: null }
+    const user: AppUser = { id: uid(), email: 'demo@example.com', nickname: 'ゲスト', graduationYear: null, universityName: null, shareWithCareerCenter: false }
     storage.set(KEY, user)
     return user
   },

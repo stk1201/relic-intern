@@ -12,7 +12,7 @@ import { uid } from '@/lib/storage'
 import { cn } from '@/lib/utils'
 import { analyze, getFirstQuestion, inferAxisFromText, respond, TOTAL_QUESTIONS } from '@/services/aiService'
 import { diagnosisService } from '@/services/diagnosisService'
-import type { ChatChoice, ChatMessage, DiagnosisAnswer, DiagnosisSession, StartingRole } from '@/types'
+import type { ChatChoice, ChatMessage, DiagnosisAnswer, DiagnosisSession, EngineerField } from '@/types'
 
 const newMessage = (role: ChatMessage['role'], content: string): ChatMessage => ({
   id: uid(),
@@ -23,7 +23,7 @@ const newMessage = (role: ChatMessage['role'], content: string): ChatMessage => 
 
 const createSession = (): DiagnosisSession => ({
   id: uid(),
-  startingRole: null,
+  engineerField: null,
   answers: [],
   messages: [newMessage('ai', getFirstQuestion().prompt)],
   createdAt: new Date().toISOString(),
@@ -53,12 +53,12 @@ export default function DiagnosisPage() {
       text: answerText,
       axis: choice?.axis ?? inferAxisFromText(answerText),
     }
-    const startingRole =
-      question.id === 'starting_role' ? (answer.value as StartingRole) : session.startingRole
+    const engineerField =
+      question.id === 'engineer_field' ? (answer.value as EngineerField) : session.engineerField
 
     const updated: DiagnosisSession = {
       ...session,
-      startingRole,
+      engineerField,
       answers: [...session.answers, answer],
       messages: [...session.messages, newMessage('user', answerText)],
     }

@@ -8,19 +8,22 @@ import {
   Compass,
   CreditCard,
   HelpCircle,
+  Search,
   RotateCcw,
   Route,
 } from 'lucide-react'
 import { CareerRoadmap } from '@/components/career/CareerRoadmap'
 import { CompanyTraitList } from '@/components/career/CompanyTraitList'
 import { SkillGapChecker } from '@/components/career/SkillGapChecker'
+import { CompanyCard } from '@/components/company/CompanyCard'
+import { matchCompanies } from '@/data/companies'
 import { ValueBars } from '@/components/common/ValueBars'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuth } from '@/contexts/AuthContext'
 import { CAREER_PATH_MAP } from '@/data/careerPaths'
-import { STARTING_ROLE_LABEL } from '@/data/values'
+import { ENGINEER_FIELD_LABEL } from '@/data/values'
 import { cn } from '@/lib/utils'
 import { diagnosisService } from '@/services/diagnosisService'
 import type { DiagnosisResult } from '@/types'
@@ -72,7 +75,7 @@ export default function ResultPage() {
           <h1 className="mt-2 font-display text-4xl font-black sm:text-5xl">{result.typeName}</h1>
           <p className="mt-4 max-w-2xl leading-relaxed opacity-90">{result.typeDescription}</p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <Badge className="bg-white/10 text-primary-foreground">最初の職種：{STARTING_ROLE_LABEL[result.startingRole]}</Badge>
+            <Badge className="bg-white/10 text-primary-foreground">興味のある分野：{ENGINEER_FIELD_LABEL[result.engineerField] ?? '未定'}</Badge>
             {result.keywords.map((k) => (
               <Badge key={k} className="bg-accent text-accent-foreground">#{k}</Badge>
             ))}
@@ -200,6 +203,21 @@ export default function ResultPage() {
         <section>
           <SectionTitle icon={Building2} title="会社選びのチェックポイント" sub="選んだキャリアを実現しやすい会社の特徴です" />
           <CompanyTraitList traitIds={result.traitIds} />
+        </section>
+
+        {/* 企業（架空） */}
+        <section>
+          <SectionTitle icon={Search} title="あなたの軸に合う企業の例" sub="会社の特徴と目指すキャリアが重なる企業です（架空のサンプル）" />
+          <div className="grid gap-4 md:grid-cols-3">
+            {matchCompanies(result).map(({ company }) => (
+              <CompanyCard key={company.id} company={company} highlightTraitIds={result.traitIds} />
+            ))}
+          </div>
+          <Button asChild variant="link" className="mt-2 h-auto px-0">
+            <Link to="/companies">
+              特徴から企業を探す <ArrowRight />
+            </Link>
+          </Button>
         </section>
 
         {/* 逆質問 */}

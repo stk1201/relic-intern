@@ -227,7 +227,7 @@ export default function CardPage() {
           </div>
 
           <Card className="bg-muted/40">
-            <CardContent className="flex items-center justify-between gap-4 p-5">
+            <CardContent className="flex items-center justify-between gap-4 p-5 sm:p-5">
               <div className="flex gap-3">
                 {result.isPublic ? <Globe className="h-5 w-5 shrink-0 text-primary" /> : <Lock className="h-5 w-5 shrink-0 text-muted-foreground" />}
                 <div>

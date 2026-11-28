@@ -4,7 +4,7 @@ export const COMPANY_TRAITS: CompanyTrait[] = [
   {
     id: 'job-change',
     name: '職種転換・社内公募制度',
-    description: 'エンジニア→PM、営業→企画など、社内で職種を変えられる仕組みがある。',
+    description: 'エンジニア→PM、開発→セールスエンジニアなど、社内で職種を変えられる仕組みがある。',
     howToCheck: '「直近3年で職種転換した人は何人いますか？」と実績の数で確認する',
   },
   {

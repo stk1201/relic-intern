@@ -8,7 +8,7 @@ export function Footer() {
         <div className="space-y-3">
           <Logo />
           <p className="max-w-sm text-sm text-muted-foreground">
-            なりたい未来から逆算して、会社選びの軸をつくる。就活生のためのAIキャリア対話アプリです。
+            なりたい未来から逆算して、会社選びの軸をつくる。エンジニア志望の就活生のためのAIキャリア対話アプリです。
           </p>
         </div>
         <div>
@@ -16,12 +16,14 @@ export function Footer() {
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li><Link to="/diagnosis" className="hover:text-primary">AI診断</Link></li>
             <li><Link to="/careers" className="hover:text-primary">キャリア図鑑</Link></li>
+            <li><Link to="/companies" className="hover:text-primary">企業を探す</Link></li>
             <li><Link to="/mypage" className="hover:text-primary">マイページ</Link></li>
           </ul>
         </div>
         <div>
           <p className="mb-3 text-sm font-bold">ご利用にあたって</p>
           <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/for-universities" className="font-bold text-primary hover:underline">大学・キャリアセンターの方へ</Link></li>
             <li><Link to="/about" className="hover:text-primary">このサービスについて</Link></li>
             <li><Link to="/terms" className="hover:text-primary">利用規約</Link></li>
             <li><Link to="/privacy" className="hover:text-primary">プライバシーポリシー</Link></li>

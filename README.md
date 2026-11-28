@@ -1,7 +1,10 @@
 # キャリア逆算ナビ
 
-AIとの対話を通して、就活生が「なりたい未来」から会社選びの軸を言語化するWebアプリです。
-現在は **UIのみ（モックデータ）** で動作します。Supabase との接続は `src/services/` を差し替えるだけで行えるようにしてあります。
+**エンジニア志望の就活生**が、AI（Claude）との対話を通して「なりたい未来」から会社選びの軸を言語化するWebアプリです。
+収益は **大学・キャリアセンター向けの法人契約（学生は無料）** を想定しています。
+
+現在は **UIのみ（モックデータ）** で動作します。掲載企業はすべて**架空のサンプル**です。
+Supabase の環境変数を設定すると、AI対話は Edge Function 経由で Claude を使います（失敗時はモックにフォールバック）。
 
 ## 技術スタック
 
@@ -15,6 +18,7 @@ AIとの対話を通して、就活生が「なりたい未来」から会社選
 | アイコン | lucide-react | |
 | 画像出力 | html-to-image | 就活軸カードの PNG 化 |
 | バックエンド（予定） | Supabase（Auth / Postgres / Storage / Edge Functions） | `@supabase/supabase-js` 導入済み |
+| AI | Claude（`claude-opus-5-5`）/ `@anthropic-ai/sdk` | `supabase/functions/career-chat`。APIキーはサーバー側のみ |
 
 ## 起動
 
@@ -30,10 +34,14 @@ npm run dev
 ├─ /diagnosis     AI対話診断（チャット）
 │   └─ /result/:id    診断結果（タイプ・就活軸・価値観・キャリアパス・ギャップ・会社の特徴・逆質問）
 │       └─ /card/:id  就活軸カード作成（画像保存・SNSシェア・公開設定）
-├─ /careers       キャリア図鑑（一覧／エンジニア・ビジネス職で絞り込み）
+├─ /careers       キャリア図鑑（一覧／カテゴリで絞り込み）
 │   └─ /careers/:id   キャリア詳細（ロードマップ・必要スキル・会社の特徴）
-├─ /mypage        マイページ（診断履歴・プロフィール）
-├─ /login         ログイン／新規登録
+├─ /companies     軸から探す企業（架空のサンプル／会社の特徴で絞り込み）
+│   └─ /companies/:id 企業詳細
+├─ /mypage        マイページ（診断履歴・プロフィール・キャリアセンター共有設定）
+├─ /login         ログイン／新規登録（大学の招待コード）
+├─ /for-universities 大学・キャリアセンター向けページ（お問い合わせ）
+├─ /admin         キャリアセンター管理画面（デモ）
 ├─ /about         このサービスについて
 ├─ /terms         利用規約
 └─ /privacy       プライバシーポリシー
@@ -66,6 +74,6 @@ supabase/migrations/  テーブル定義・RLS（案）
 3. 各サービスをモックから Supabase 実装に差し替え
    - `authService.ts` → `supabase.auth.*`
    - `diagnosisService.ts` → `diagnosis_results` テーブル
-   - `aiService.ts` → Edge Function（`career-chat`）経由で LLM を呼び出し（APIキーはフロントに置かない）
+   - `aiService.ts` → 実装済み。`supabase functions deploy career-chat` と `supabase secrets set ANTHROPIC_API_KEY=...` で有効化
    - `SkillGapChecker` → `skill_checks` テーブル
    - カード画像 → Storage `axis-cards` バケット

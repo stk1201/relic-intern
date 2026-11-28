@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Compass, LogIn, Map, Menu, Sparkles, User } from 'lucide-react'
+import { Building2, Compass, LogIn, Map, Menu, Sparkles, User } from 'lucide-react'
 import { useState } from 'react'
 import { Logo } from '@/components/common/Logo'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 const NAV = [
   { to: '/diagnosis', label: 'AI診断', icon: Sparkles },
   { to: '/careers', label: 'キャリア図鑑', icon: Map },
+  { to: '/companies', label: '企業を探す', icon: Building2 },
   { to: '/mypage', label: 'マイページ', icon: User },
 ]
 

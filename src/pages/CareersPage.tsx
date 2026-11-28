@@ -6,13 +6,14 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CAREER_PATHS, CATEGORY_LABEL } from '@/data/careerPaths'
+import type { CareerCategory } from '@/types'
 
-type Filter = 'all' | 'engineer' | 'business'
+type Filter = 'all' | CareerCategory
 
 export default function CareersPage() {
   const [filter, setFilter] = useState<Filter>('all')
   const paths = useMemo(
-    () => (filter === 'all' ? CAREER_PATHS : CAREER_PATHS.filter((p) => p.startingRoles.includes(filter))),
+    () => (filter === 'all' ? CAREER_PATHS : CAREER_PATHS.filter((p) => p.category === filter)),
     [filter],
   )
 
@@ -21,15 +22,18 @@ export default function CareersPage() {
       <PageHeader
         eyebrow="CAREER MAP"
         title="キャリア図鑑"
-        description="最初の職種の先に、どんな道があるのか。それぞれのゴールと必要なスキル、合う会社の特徴をまとめました。"
+        description="新卒エンジニアの先に、どんな道があるのか。それぞれのゴールと必要なスキル、合う会社の特徴をまとめました。"
       />
       <div className="container py-10">
         <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
-          <TabsList className="w-full sm:w-auto">
-            <TabsTrigger value="all" className="flex-1 sm:flex-none">すべて</TabsTrigger>
-            <TabsTrigger value="engineer" className="flex-1 sm:flex-none">エンジニアから</TabsTrigger>
-            <TabsTrigger value="business" className="flex-1 sm:flex-none">ビジネス職から</TabsTrigger>
-          </TabsList>
+          <div className="-mx-4 overflow-x-auto px-4 scrollbar-none">
+            <TabsList className="w-max">
+              <TabsTrigger value="all">すべて</TabsTrigger>
+              {(Object.keys(CATEGORY_LABEL) as CareerCategory[]).map((c) => (
+                <TabsTrigger key={c} value={c}>{CATEGORY_LABEL[c]}</TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
         </Tabs>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

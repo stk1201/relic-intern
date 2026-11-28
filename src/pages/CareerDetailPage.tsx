@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CAREER_PATH_MAP, CATEGORY_LABEL } from '@/data/careerPaths'
-import { STARTING_ROLE_LABEL } from '@/data/values'
 import NotFoundPage from './NotFoundPage'
 
 export default function CareerDetailPage() {
@@ -24,9 +23,7 @@ export default function CareerDetailPage() {
           </Link>
           <div className="mt-4 flex flex-wrap gap-2">
             <Badge variant="secondary">{CATEGORY_LABEL[path.category]}</Badge>
-            {path.startingRoles.map((r) => (
-              <Badge key={r} variant="outline">{STARTING_ROLE_LABEL[r]}から</Badge>
-            ))}
+            <Badge variant="outline">新卒エンジニアから</Badge>
           </div>
           <h1 className="mt-3 text-3xl font-black sm:text-4xl">{path.name}</h1>
           <p className="mt-2 text-lg font-bold text-primary">{path.catchcopy}</p>

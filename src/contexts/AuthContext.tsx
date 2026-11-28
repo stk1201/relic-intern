@@ -5,7 +5,7 @@ import type { AppUser } from '@/types'
 interface AuthContextValue {
   user: AppUser | null
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, nickname: string) => Promise<void>
+  signUp: (email: string, password: string, nickname: string, universityCode?: string) => Promise<void>
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
   updateProfile: (patch: Partial<AppUser>) => Promise<void>
@@ -22,8 +22,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = useCallback(async (email: string, password: string) => {
     setUser(await authService.signIn(email, password))
   }, [])
-  const signUp = useCallback(async (email: string, password: string, nickname: string) => {
-    setUser(await authService.signUp(email, password, nickname))
+  const signUp = useCallback(async (email: string, password: string, nickname: string, universityCode?: string) => {
+    setUser(await authService.signUp(email, password, nickname, universityCode))
   }, [])
   const signInWithGoogle = useCallback(async () => {
     setUser(await authService.signInWithGoogle())

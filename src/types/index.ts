@@ -9,10 +9,10 @@ export type ValueAxis = 'contribution' | 'mastery' | 'leadership' | 'creation' |
 
 export type ValueScores = Record<ValueAxis, number>
 
-/** 最初に考えている職種 */
-export type StartingRole = 'engineer' | 'business' | 'undecided'
+/** 興味のあるエンジニア分野 */
+export type EngineerField = 'web' | 'infra' | 'data' | 'undecided'
 
-export type CareerCategory = 'specialist' | 'management' | 'product' | 'executive' | 'business'
+export type CareerCategory = 'specialist' | 'management' | 'product' | 'executive' | 'support'
 
 export interface CareerStep {
   period: string
@@ -30,7 +30,6 @@ export interface CareerPath {
   name: string
   shortName: string
   category: CareerCategory
-  startingRoles: Exclude<StartingRole, 'undecided'>[]
   catchcopy: string
   description: string
   /** 各価値観との相性（0〜1） */
@@ -82,7 +81,7 @@ export interface DiagnosisAnswer {
 
 export interface DiagnosisSession {
   id: string
-  startingRole: StartingRole | null
+  engineerField: EngineerField | null
   answers: DiagnosisAnswer[]
   messages: ChatMessage[]
   createdAt: string
@@ -99,7 +98,7 @@ export interface DiagnosisResult {
   sessionId: string
   userId: string | null
   createdAt: string
-  startingRole: StartingRole
+  engineerField: EngineerField
   typeName: string
   typeDescription: string
   valueScores: ValueScores
@@ -118,4 +117,29 @@ export interface AppUser {
   email: string
   nickname: string
   graduationYear: number | null
+  /** 大学の招待コードで紐づく（Supabase: profiles.university_id） */
+  universityName: string | null
+  /** キャリアセンターへの結果共有に同意しているか */
+  shareWithCareerCenter: boolean
+}
+
+/* ---------- 企業（架空のサンプルデータ） ---------- */
+
+export type CompanySize = 'スタートアップ' | 'メガベンチャー' | '大手企業' | '中堅企業'
+
+export interface Company {
+  id: string
+  name: string
+  industry: string
+  size: CompanySize
+  employees: string
+  tagline: string
+  description: string
+  engineerFields: Exclude<EngineerField, 'undecided'>[]
+  traitIds: string[]
+  careerPathIds: string[]
+  /** 制度・環境の具体例 */
+  highlights: string[]
+  /** ロゴ代わりの色 */
+  color: string
 }

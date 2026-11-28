@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [nickname, setNickname] = useState('')
+  const [universityCode, setUniversityCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -29,7 +30,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       if (mode === 'signin') await signIn(email, password)
-      else await signUp(email, password, nickname)
+      else await signUp(email, password, nickname, universityCode)
       navigate('/mypage')
     } catch {
       setError('ログインに失敗しました。入力内容をご確認ください')
@@ -61,9 +62,15 @@ export default function LoginPage() {
             </TabsList>
 
             <form onSubmit={onSubmit} className="mt-6 space-y-4">
-              <TabsContent value="signup" className="mt-0 space-y-2">
-                <Label htmlFor="nickname">ニックネーム</Label>
-                <Input id="nickname" value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder="例：さとう" maxLength={20} />
+              <TabsContent value="signup" className="mt-0 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="nickname">ニックネーム</Label>
+                  <Input id="nickname" value={nickname} onChange={(e) => setNickname(e.target.value)} placeholder="例：さとう" maxLength={20} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="univ-code">大学の招待コード <span className="font-normal text-muted-foreground">（任意）</span></Label>
+                  <Input id="univ-code" value={universityCode} onChange={(e) => setUniversityCode(e.target.value)} placeholder="キャリアセンターから配布されたコード" />
+                </div>
               </TabsContent>
               <div className="space-y-2">
                 <Label htmlFor="email">メールアドレス</Label>

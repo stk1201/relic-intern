@@ -59,7 +59,7 @@ export default function MyPage() {
               {results.map((r, i) => (
                 <li key={r.id}>
                   <Card className="transition-shadow hover:shadow-md">
-                    <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
+                    <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:p-5">
                       <Link to={`/result/${r.id}`} className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                           <span>{formatDate(r.createdAt)}</span>
@@ -111,6 +111,23 @@ export default function MyPage() {
                       ))}
                     </div>
                   </div>
+                  {user.universityName && (
+                    <div className="space-y-2 rounded-xl bg-muted/60 p-3">
+                      <p className="text-xs text-muted-foreground">所属：{user.universityName}</p>
+                      <label className="flex cursor-pointer items-start gap-2 text-sm font-bold">
+                        <input
+                          type="checkbox"
+                          checked={user.shareWithCareerCenter}
+                          onChange={(e) => updateProfile({ shareWithCareerCenter: e.target.checked })}
+                          className="mt-0.5 h-4 w-4 accent-[hsl(var(--primary))]"
+                        />
+                        <span>
+                          キャリアセンターに診断結果を共有する
+                          <span className="block text-xs font-normal text-muted-foreground">面談の準備に使われます。いつでもオフにできます。</span>
+                        </span>
+                      </label>
+                    </div>
+                  )}
                   <p className="text-xs text-muted-foreground">{user.email}</p>
                   <Button
                     variant="outline"

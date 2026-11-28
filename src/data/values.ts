@@ -71,8 +71,9 @@ export const VALUE_AXIS_MAP = Object.fromEntries(VALUE_AXES.map((a) => [a.id, a]
   ValueAxisMeta
 >
 
-export const STARTING_ROLE_LABEL = {
-  engineer: 'エンジニア',
-  business: 'ビジネス職（営業・企画・マーケ）',
-  undecided: 'まだ決めていない',
+export const ENGINEER_FIELD_LABEL = {
+  web: 'Web・アプリ開発',
+  infra: 'インフラ・クラウド',
+  data: 'AI・データ',
+  undecided: '分野は未定',
 } as const

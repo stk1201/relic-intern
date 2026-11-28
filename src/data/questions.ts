@@ -16,12 +16,13 @@ export interface ScriptQuestion {
  */
 export const SCRIPT_QUESTIONS: ScriptQuestion[] = [
   {
-    id: 'starting_role',
+    id: 'engineer_field',
     prompt:
-      'はじめまして！キャリア逆算ナビです。\nこれから5〜6問ほど、あなたの「なりたい未来」について一緒に考えていきます。\n\nまず、最初の職種として考えているものを教えてください。',
+      'はじめまして！キャリア逆算ナビです。\nこれから6問ほど、エンジニアとしての「なりたい未来」を一緒に考えていきます。\n\nまず、いま興味のある分野を教えてください。',
     choices: [
-      { label: 'エンジニア', value: 'engineer' },
-      { label: 'ビジネス職（営業・企画・マーケ）', value: 'business' },
+      { label: 'Web・アプリ開発', value: 'web' },
+      { label: 'インフラ・クラウド', value: 'infra' },
+      { label: 'AI・データ', value: 'data' },
       { label: 'まだ決めていない', value: 'undecided' },
     ],
     allowFreeText: false,

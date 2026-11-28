@@ -24,7 +24,7 @@ const STEPS = [
   {
     icon: Route,
     title: '未来のキャリアを知る',
-    text: '最初の職種の先にある道（スペシャリスト・PM・EM・CTO・起業など）と、必要なスキルを整理。',
+    text: 'エンジニアの先にある道（スペシャリスト・テックリード・PM・EM・CTO・起業など）と、必要なスキルを整理。',
   },
   {
     icon: Building2,
@@ -40,11 +40,14 @@ const PAINS = [
 ]
 
 const TREE = [
-  { name: 'スペシャリスト', sub: '技術を極める' },
-  { name: 'テックリード', sub: '技術でチームを導く' },
-  { name: 'PM', sub: 'プロダクトを率いる' },
-  { name: 'EM', sub: 'チームを育てる' },
-  { name: 'CTO・起業', sub: '経営をリードする' },
+  { id: 'specialist', name: 'スペシャリスト', sub: '技術を極める' },
+  { id: 'techlead', name: 'テックリード', sub: '技術でチームを導く' },
+  { id: 'pm', name: 'PM', sub: 'プロダクトを率いる' },
+  { id: 'em', name: 'EM', sub: 'チームを育てる' },
+  { id: 'cto', name: 'CTO', sub: '技術で経営をリード' },
+  { id: 'founder', name: '起業', sub: '事業を自らつくる' },
+  { id: 'solution-engineer', name: 'セールスエンジニア', sub: '技術で顧客を支える' },
+  { id: 'corporate-se', name: '社内SE', sub: '社内をITで支える' },
 ]
 
 const COMPARE = [
@@ -56,7 +59,8 @@ const COMPARE = [
 
 const FAQ = [
   { q: '料金はかかりますか？', a: 'すべての機能を無料でご利用いただけます。' },
-  { q: '職種がまだ決まっていなくても使えますか？', a: 'はい。「まだ決めていない」を選ぶと、エンジニア職・ビジネス職の両方からキャリアパスを提案します。' },
+  { q: 'プログラミング未経験・文系でも使えますか？', a: 'はい。エンジニアを目指しているなら経験は問いません。必要なスキルのチェックで、今から何を準備すればよいかがわかります。' },
+  { q: '分野（Web・インフラ・AIなど）が決まっていなくても大丈夫？', a: '大丈夫です。分野よりも「どんなエンジニアになりたいか」から考えるのがこのサービスの特徴です。' },
   { q: '診断結果は正解ですか？', a: '結果は「考えるための地図」です。正解を決めるものではありません。何度でも診断し直し、OB・OG訪問や面接で確かめながら更新してください。' },
   { q: '登録しないと使えませんか？', a: '診断は登録なしで利用できます。結果を保存して見返したい場合はログインしてください。' },
 ]
@@ -70,7 +74,7 @@ export default function HomePage() {
         <div className="container grid items-center gap-10 py-14 md:grid-cols-[1.1fr_1fr] md:py-24">
           <div className="animate-fade-up">
             <Badge variant="accent" className="mb-4">
-              <Sparkles className="h-3.5 w-3.5" /> 就活生のためのAIキャリア対話
+              <Sparkles className="h-3.5 w-3.5" /> エンジニア志望の就活生のためのAIキャリア対話
             </Badge>
             <h1 className="text-balance text-[2rem] font-black leading-tight sm:text-5xl sm:leading-tight">
               入る会社より、
@@ -82,7 +86,7 @@ export default function HomePage() {
               から選ぶ。
             </h1>
             <p className="mt-5 max-w-lg text-base text-muted-foreground sm:text-lg">
-              AIとの対話で、あなたの価値観から「その先のキャリア」を逆算。
+              AIとの対話で、あなたの価値観から「エンジニアの先のキャリア」を逆算。
               必要なスキルと、実現しやすい会社の特徴がわかる「就活軸カード」をつくります。
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -147,7 +151,7 @@ export default function HomePage() {
           ))}
         </div>
         <p className="mx-auto mt-8 max-w-2xl text-center text-muted-foreground">
-          最初の職種の「その先」が見えないまま選考に進むと、志望がぶれたり、入社後に「思っていたキャリアと違う」と感じやすくなります。
+          エンジニアの「その先」が見えないまま選考に進むと、志望がぶれたり、入社後に「思っていたキャリアと違う」と感じやすくなります。
         </p>
       </section>
 
@@ -182,11 +186,11 @@ export default function HomePage() {
             新卒エンジニア
           </div>
           <div className="mx-auto h-8 w-0.5 bg-primary/30" />
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {TREE.map((t) => (
               <Link
-                key={t.name}
-                to="/careers"
+                key={t.id}
+                to={`/careers/${t.id}`}
                 className="group rounded-2xl border bg-card p-4 text-center transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
               >
                 <p className="font-bold group-hover:text-primary">{t.name}</p>
