@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { CheckCircle2, Circle } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
-import { storage } from '@/lib/storage'
+import { storage, STORAGE_KEYS } from '@/lib/storage'
 import { cn } from '@/lib/utils'
 import type { CareerPath } from '@/types'
 
@@ -9,10 +9,10 @@ const TYPE_LABEL = { technical: '技術', human: 'ヒューマン', business: '�
 
 /**
  * 必要スキル・経験の自己チェック（＝今の自分とのギャップを可視化）
- * Supabase 接続時は skill_checks テーブル（user_id, path_id, item, checked）に保存する。
+ * チェック状態はキャリアごとにローカルストレージへ保存する。
  */
 export function SkillGapChecker({ path }: { path: CareerPath }) {
-  const key = `skill-checks:${path.id}`
+  const key = STORAGE_KEYS.skillChecks(path.id)
   const [checked, setChecked] = useState<string[]>(() => storage.get<string[]>(key, []))
 
   useEffect(() => {

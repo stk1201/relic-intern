@@ -1,17 +1,14 @@
-import { sleep, storage, uid } from '@/lib/storage'
+import { sleep, storage, STORAGE_KEYS, uid } from '@/lib/storage'
 import type { AppUser } from '@/types'
 
 /**
- * 認証サービス（モック）
+ * 認証サービス（ローカルストレージによる簡易版）
  *
- * ▼ Supabase 接続時の差し替えイメージ
- *   signUp  → supabase.auth.signUp({ email, password, options: { data: { nickname } } })
- *   signIn  → supabase.auth.signInWithPassword({ email, password })
- *   google  → supabase.auth.signInWithOAuth({ provider: 'google' })
- *   signOut → supabase.auth.signOut()
- *   profile → profiles テーブル（auth.users と 1:1）
+ * サーバーがないため、パスワードの照合は行わない。
+ * 入力したメールアドレス・ニックネームを「この端末のプロフィール」として保存するだけで、
+ * 本当の意味での認証・本人確認にはならない点に注意。
  */
-const KEY = 'user'
+const KEY = STORAGE_KEYS.user
 
 export const authService = {
   getCurrentUser(): AppUser | null {
@@ -25,7 +22,7 @@ export const authService = {
       email,
       nickname: nickname || email.split('@')[0],
       graduationYear: null,
-      // モック：コードが入力されたらデモ大学に所属させる（本番は universities.invite_code で照合）
+      // デモ：コードが入力されたらサンプル大学に所属させる
       universityName: universityCode.trim() ? 'サンプル大学（デモ）' : null,
       shareWithCareerCenter: false,
     }

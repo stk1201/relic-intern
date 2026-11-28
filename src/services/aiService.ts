@@ -2,8 +2,6 @@ import { CAREER_PATHS } from '@/data/careerPaths'
 import { AXIS_KEYWORDS, SCRIPT_QUESTIONS, type ScriptQuestion } from '@/data/questions'
 import { VALUE_AXES, VALUE_AXIS_MAP } from '@/data/values'
 import { sleep } from '@/lib/storage'
-import { supabase } from '@/lib/supabase'
-import { ENGINEER_FIELD_LABEL } from '@/data/values'
 import type {
   DiagnosisAnswer,
   DiagnosisResult,
@@ -14,14 +12,10 @@ import type {
 } from '@/types'
 
 /**
- * AI 対話サービス
+ * AI 対話サービス（ブラウザ内で完結するルールベース実装）
  *
- * - Supabase 未設定時：台本ベースのモックで動作
- * - Supabase 設定時：Edge Function `career-chat`（Claude）で相づちと結果文章を生成
- *   失敗した場合はモックの文章にフォールバックする
- *
- * スコア計算・キャリアの相性・会社の特徴はアプリ側で決定し、
- * Claude には「言葉にする」部分だけを任せる（結果の一貫性と事実性のため）。
+ * 台本の質問・回答への相づち・スコア計算・キャリアの相性判定をすべてブラウザ内で行う。
+ * 外部APIには通信しない。
  */
 
 export interface AiTurn {
@@ -61,24 +55,6 @@ export const TOTAL_QUESTIONS = SCRIPT_QUESTIONS.length
 
 /** ユーザーの回答を受けて、AI の相づち＋次の質問を返す */
 export async function respond(session: DiagnosisSession, answer: DiagnosisAnswer): Promise<AiTurn> {
-  const index = SCRIPT_QUESTIONS.findIndex((q) => q.id === answer.questionId)
-  const nextQuestion = SCRIPT_QUESTIONS[index + 1] ?? null
-
-  if (supabase) {
-    const { data, error } = await supabase.functions.invoke<{ reply: string }>('career-chat', {
-      body: {
-        action: 'respond',
-        history: session.messages.map((m) => ({ role: m.role, content: m.content })),
-        answer: answer.text,
-        nextQuestion: nextQuestion?.prompt ?? null,
-      },
-    })
-    if (!error && data?.reply) return { reply: data.reply, nextQuestion }
-  }
-  return mockRespond(session, answer)
-}
-
-async function mockRespond(session: DiagnosisSession, answer: DiagnosisAnswer): Promise<AiTurn> {
   await sleep(900 + Math.random() * 600)
   const index = SCRIPT_QUESTIONS.findIndex((q) => q.id === answer.questionId)
   const nextQuestion = SCRIPT_QUESTIONS[index + 1] ?? null
@@ -138,8 +114,8 @@ function matchPaths(scores: ValueScores): PathMatch[] {
 /** 回答全体を分析して診断結果を生成する */
 export async function analyze(
   session: DiagnosisSession,
-): Promise<Omit<DiagnosisResult, 'id' | 'userId' | 'createdAt' | 'isPublic'>> {
-  if (!supabase) await sleep(2200)
+): Promise<Omit<DiagnosisResult, 'id' | 'userId' | 'createdAt'>> {
+  await sleep(2200)
   const engineerField = session.engineerField ?? 'undecided'
   const valueScores = calcValueScores(session.answers)
   const ranked = [...VALUE_AXES].sort((a, b) => valueScores[b.id] - valueScores[a.id])
@@ -170,7 +146,7 @@ export async function analyze(
   })
   const traitIds = [...traitCount.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([id]) => id)
 
-  const base = {
+  return {
     sessionId: session.id,
     engineerField,
     typeName: `${second.adjective}${first.noun}`,
@@ -180,40 +156,5 @@ export async function analyze(
     keywords: [first.short, second.short, topPath.shortName],
     pathMatches,
     traitIds,
-  }
-
-  if (!supabase) return base
-
-  // Claude で文章をパーソナライズ（順位・数値は変えない）
-  const top3 = pathMatches.slice(0, 3)
-  const { data, error } = await supabase.functions.invoke<{
-    typeDescription: string
-    axisStatements: string[]
-    pathReasons: { pathId: string; reason: string }[]
-  }>('career-chat', {
-    body: {
-      action: 'analyze',
-      engineerField: ENGINEER_FIELD_LABEL[engineerField],
-      answers: session.answers.map((a) => ({
-        question: SCRIPT_QUESTIONS.find((q) => q.id === a.questionId)?.prompt ?? '',
-        answer: a.text,
-      })),
-      topValues: [first.label, second.label],
-      typeName: base.typeName,
-      paths: top3.map((m) => {
-        const p = CAREER_PATHS.find((x) => x.id === m.pathId)!
-        return { id: p.id, name: p.name, description: p.description, score: m.score }
-      }),
-      candidateAxes: axisStatements,
-    },
-  })
-  if (error || !data || data.axisStatements?.length !== 3) return base
-
-  const reasons = new Map(data.pathReasons.map((r) => [r.pathId, r.reason]))
-  return {
-    ...base,
-    typeDescription: data.typeDescription,
-    axisStatements: data.axisStatements,
-    pathMatches: pathMatches.map((m) => ({ ...m, reason: reasons.get(m.pathId) ?? m.reason })),
   }
 }

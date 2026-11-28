@@ -2,7 +2,6 @@ import type { CareerCategory, CareerPath } from '@/types'
 
 /**
  * キャリアパスのマスターデータ
- * Supabase 接続後は career_paths テーブルに移し、管理画面から更新できるようにする想定。
  */
 export const CAREER_PATHS: CareerPath[] = [
   {

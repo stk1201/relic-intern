@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { CreditCard, LogOut, Plus, Trash2 } from 'lucide-react'
+import { CreditCard, Download, HardDrive, LogOut, Plus, Trash2 } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/AuthContext'
 import { CAREER_PATH_MAP } from '@/data/careerPaths'
+import { storage } from '@/lib/storage'
 import { formatDate } from '@/lib/utils'
 import { diagnosisService } from '@/services/diagnosisService'
 import type { DiagnosisResult } from '@/types'
@@ -22,6 +23,25 @@ export default function MyPage() {
   const [results, setResults] = useState<DiagnosisResult[]>([])
   const [deleteTarget, setDeleteTarget] = useState<DiagnosisResult | null>(null)
   const [nickname, setNickname] = useState(user?.nickname ?? '')
+  const [confirmClear, setConfirmClear] = useState(false)
+
+  const exportData = () => {
+    const blob = new Blob([JSON.stringify(storage.exportAll(), null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `career-navi-data-${new Date().toISOString().slice(0, 10)}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const clearAll = async () => {
+    storage.clearAll()
+    await signOut()
+    setResults([])
+    setConfirmClear(false)
+    navigate('/')
+  }
 
   useEffect(() => {
     diagnosisService.listResults(user?.id ?? null).then(setResults)
@@ -123,7 +143,7 @@ export default function MyPage() {
                         />
                         <span>
                           キャリアセンターに診断結果を共有する
-                          <span className="block text-xs font-normal text-muted-foreground">面談の準備に使われます。いつでもオフにできます。</span>
+                          <span className="block text-xs font-normal text-muted-foreground">デモ版のため、実際にはどこにも共有されません。</span>
                         </span>
                       </label>
                     </div>
@@ -143,11 +163,29 @@ export default function MyPage() {
               ) : (
                 <>
                   <p className="text-sm text-muted-foreground">
-                    現在はこの端末にのみ結果が保存されています。ログインすると、どの端末からでも見返せます。
+                    ニックネームなどを登録すると、診断結果やカードに反映されます。データはこのブラウザ内にだけ保存されます。
                   </p>
                   <Button asChild className="w-full"><Link to="/login">ログイン / 新規登録</Link></Button>
                 </>
               )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><HardDrive className="h-4 w-4" /> データの管理</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                すべてのデータはこのブラウザのローカルストレージに保存され、外部には送信されません。
+                ブラウザのデータを消去すると、診断結果も消えます。
+              </p>
+              <Button variant="outline" className="w-full" onClick={exportData}>
+                <Download /> データを書き出す（JSON）
+              </Button>
+              <Button variant="ghost" className="w-full text-destructive hover:text-destructive" onClick={() => setConfirmClear(true)}>
+                <Trash2 /> この端末のデータをすべて削除
+              </Button>
             </CardContent>
           </Card>
         </aside>
@@ -164,6 +202,21 @@ export default function MyPage() {
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>キャンセル</Button>
             <Button variant="destructive" onClick={confirmDelete}>削除する</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={confirmClear} onOpenChange={setConfirmClear}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>この端末のデータをすべて削除しますか？</DialogTitle>
+            <DialogDescription>
+              診断結果、スキルチェック、プロフィールなど、このブラウザに保存されたデータがすべて消えます。この操作は取り消せません。
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setConfirmClear(false)}>キャンセル</Button>
+            <Button variant="destructive" onClick={clearAll}>すべて削除する</Button>
           </div>
         </DialogContent>
       </Dialog>

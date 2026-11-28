@@ -21,7 +21,6 @@ import { ValueBars } from '@/components/common/ValueBars'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useAuth } from '@/contexts/AuthContext'
 import { CAREER_PATH_MAP } from '@/data/careerPaths'
 import { ENGINEER_FIELD_LABEL } from '@/data/values'
 import { cn } from '@/lib/utils'
@@ -45,7 +44,6 @@ function SectionTitle({ icon: Icon, title, sub }: { icon: typeof Compass; title:
 
 export default function ResultPage() {
   const { id = '' } = useParams()
-  const { user } = useAuth()
   const [result, setResult] = useState<DiagnosisResult | null | undefined>(undefined)
   const [selectedPathId, setSelectedPathId] = useState<string>('')
 
@@ -230,22 +228,22 @@ export default function ResultPage() {
           </ul>
         </section>
 
-        {!user && (
-          <Card className="border-accent bg-accent/10">
-            <CardContent className="flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex gap-3">
-                <Bookmark className="h-5 w-5 shrink-0 text-amber-700" />
-                <div>
-                  <p className="font-bold">結果を保存して、あとで見返しませんか？</p>
-                  <p className="text-sm text-muted-foreground">ログインすると、診断履歴やスキルチェックを複数の端末で確認できます。</p>
-                </div>
+        <Card className="border-accent bg-accent/10">
+          <CardContent className="flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex gap-3">
+              <Bookmark className="h-5 w-5 shrink-0 text-amber-700" />
+              <div>
+                <p className="font-bold">この結果は、このブラウザに保存されています</p>
+                <p className="text-sm text-muted-foreground">
+                  マイページからいつでも見返せます。ブラウザのデータを削除したり、別の端末・ブラウザで開いたりすると表示されません。
+                </p>
               </div>
-              <Button asChild>
-                <Link to="/login">ログインして保存</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+            <Button asChild variant="outline">
+              <Link to="/mypage">マイページへ</Link>
+            </Button>
+          </CardContent>
+        </Card>
 
         <p className="text-center text-xs text-muted-foreground">
           ※ 診断結果はAIによる参考情報です。実際の制度や働き方は企業ごとに異なるため、必ずご自身で確認してください。

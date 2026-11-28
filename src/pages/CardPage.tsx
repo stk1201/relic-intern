@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { toBlob } from 'html-to-image'
-import { ArrowLeft, Download, Globe, Loader2, Lock, Share2 } from 'lucide-react'
+import { ArrowLeft, Download, Loader2, Share2 } from 'lucide-react'
 import { AxisCard, CARD_SIZE, type CardFormat, type CardTheme } from '@/components/card/AxisCard'
 import { ScaledPreview } from '@/components/card/ScaledPreview'
 import { Button } from '@/components/ui/button'
@@ -65,11 +65,7 @@ export default function CardPage() {
   const shareText = `私の就活軸は「${result.axisStatements[0]}」。キャリアタイプは「${result.typeName}」でした！`
   const shareUrl = window.location.origin
 
-  /**
-   * カードを PNG 化。
-   * Supabase 接続時は storage.from('axis-cards').upload(`${userId}/${id}.png`, blob) で保存し、
-   * 公開URLを OGP 画像として使う想定。
-   */
+  /** カードを PNG 化（ブラウザ内で生成。サーバーには送信しない） */
   const renderBlob = async () => {
     if (!cardRef.current) return null
     const opts = { width: size.w, height: size.h, pixelRatio: 1, cacheBust: true }
@@ -120,11 +116,6 @@ export default function CardPage() {
     } finally {
       setBusy(null)
     }
-  }
-
-  const togglePublic = async () => {
-    await diagnosisService.updateVisibility(result.id, !result.isPublic)
-    setResult({ ...result, isPublic: !result.isPublic })
   }
 
   const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}&hashtags=${encodeURIComponent('就活軸,キャリア逆算ナビ')}`
@@ -226,20 +217,6 @@ export default function CardPage() {
             {message && <p className="text-center text-sm font-bold text-primary" role="status">{message}</p>}
           </div>
 
-          <Card className="bg-muted/40">
-            <CardContent className="flex items-center justify-between gap-4 p-5 sm:p-5">
-              <div className="flex gap-3">
-                {result.isPublic ? <Globe className="h-5 w-5 shrink-0 text-primary" /> : <Lock className="h-5 w-5 shrink-0 text-muted-foreground" />}
-                <div>
-                  <p className="text-sm font-bold">{result.isPublic ? '結果ページを公開中' : '結果ページは非公開'}</p>
-                  <p className="text-xs text-muted-foreground">公開すると、URLを知っている人がカードを閲覧できます（バックエンド接続後に有効）</p>
-                </div>
-              </div>
-              <Button size="sm" variant="outline" onClick={togglePublic} disabled={!user} title={!user ? 'ログインが必要です' : undefined}>
-                {result.isPublic ? '非公開にする' : '公開する'}
-              </Button>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>
