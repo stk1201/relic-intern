@@ -27,6 +27,18 @@ npm install
 npm run dev
 ```
 
+## デプロイ
+
+ビルドコマンド `npm run build`、公開ディレクトリ `dist`。SPA のため、全パスを `index.html` に返す設定を同梱しています。
+
+| サービス | 設定ファイル |
+| --- | --- |
+| Netlify（bolt の Deploy ボタンもこれ） | `netlify.toml` / `public/_redirects` |
+| Vercel | `vercel.json` |
+| Cloudflare Pages | `public/_redirects` |
+
+現在はモックで動くため環境変数は不要です。Supabase 接続後は `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` をホスティング側に設定してください。
+
 ## サイトマップ
 
 ```
