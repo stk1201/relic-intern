@@ -3,7 +3,6 @@ import type { Company, DiagnosisResult } from '@/types'
 /**
  * 企業データ（すべて架空のサンプル）
  * 実在の企業・団体とは関係ありません。
- * Supabase 接続後は companies テーブルに移し、大学・企業ごとに管理できるようにする想定。
  */
 export const COMPANIES: Company[] = [
   {

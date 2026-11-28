@@ -52,7 +52,7 @@ export default function LoginPage() {
         <CardContent className="space-y-6 p-6 sm:p-8">
           <div className="flex flex-col items-center gap-2 text-center">
             <Logo />
-            <p className="text-sm text-muted-foreground">診断結果を保存して、いつでも見返せます</p>
+            <p className="text-sm text-muted-foreground">この端末でプロフィールと診断結果を管理します</p>
           </div>
 
           <Tabs value={mode} onValueChange={(v) => setMode(v as 'signin' | 'signup')}>
@@ -108,6 +108,9 @@ export default function LoginPage() {
             </svg>
             Googleで続ける
           </Button>
+          <p className="rounded-xl bg-muted/60 p-3 text-xs leading-relaxed text-muted-foreground">
+            入力した情報はこのブラウザ内にだけ保存され、サーバーには送信されません。パスワードの照合は行わない簡易的なログインです。
+          </p>
           <p className="text-center text-xs text-muted-foreground">
             続行すると<Link to="/terms" className="underline">利用規約</Link>と
             <Link to="/privacy" className="underline">プライバシーポリシー</Link>に同意したものとみなされます。

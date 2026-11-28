@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { inquiryService } from '@/services/inquiryService'
 
 const PAINS = [
   '面談の時間が限られ、学生の価値観を掘り下げきれない',
@@ -24,9 +25,17 @@ const FLOW = ['お問い合わせ', 'オンラインでのご説明・デモ', '
 
 export default function ForUniversitiesPage() {
   const [sent, setSent] = useState(false)
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // Supabase 接続後は inquiries テーブルに保存し、担当者へ通知する
+    const f = new FormData(e.currentTarget)
+    const v = (k: string) => String(f.get(k) ?? '').trim()
+    await inquiryService.submit({
+      universityName: v('univ'),
+      department: v('dept'),
+      contactName: v('name'),
+      email: v('mail'),
+      message: v('msg'),
+    })
     setSent(true)
   }
 
@@ -116,17 +125,17 @@ export default function ForUniversitiesPage() {
                 <div className="flex flex-col items-center gap-3 py-8 text-center">
                   <CheckCircle2 className="h-10 w-10 text-primary" />
                   <p className="font-bold">お問い合わせを受け付けました</p>
-                  <p className="text-sm text-muted-foreground">担当者より3営業日以内にご連絡します。（デモのため実際には送信されません）</p>
+                  <p className="text-sm text-muted-foreground">デモ版のため、内容はこのブラウザ内に保存され、外部には送信されません。</p>
                 </div>
               ) : (
                 <form onSubmit={onSubmit} className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2"><Label htmlFor="univ">大学名</Label><Input id="univ" required placeholder="〇〇大学" /></div>
-                    <div className="space-y-2"><Label htmlFor="dept">部署名</Label><Input id="dept" placeholder="キャリアセンター" /></div>
-                    <div className="space-y-2"><Label htmlFor="name">ご担当者名</Label><Input id="name" required /></div>
-                    <div className="space-y-2"><Label htmlFor="mail">メールアドレス</Label><Input id="mail" type="email" required /></div>
+                    <div className="space-y-2"><Label htmlFor="univ">大学名</Label><Input id="univ" name="univ" required placeholder="〇〇大学" /></div>
+                    <div className="space-y-2"><Label htmlFor="dept">部署名</Label><Input id="dept" name="dept" placeholder="キャリアセンター" /></div>
+                    <div className="space-y-2"><Label htmlFor="name">ご担当者名</Label><Input id="name" name="name" required /></div>
+                    <div className="space-y-2"><Label htmlFor="mail">メールアドレス</Label><Input id="mail" name="mail" type="email" required /></div>
                   </div>
-                  <div className="space-y-2"><Label htmlFor="msg">ご相談内容</Label><Textarea id="msg" rows={4} placeholder="対象学年や学生数、導入時期など" /></div>
+                  <div className="space-y-2"><Label htmlFor="msg">ご相談内容</Label><Textarea id="msg" name="msg" rows={4} placeholder="対象学年や学生数、導入時期など" /></div>
                   <Button type="submit" size="lg" className="w-full"><Send /> 送信する</Button>
                 </form>
               )}

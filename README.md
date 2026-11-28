@@ -3,8 +3,8 @@
 **エンジニア志望の就活生**が、AI（Claude）との対話を通して「なりたい未来」から会社選びの軸を言語化するWebアプリです。
 収益は **大学・キャリアセンター向けの法人契約（学生は無料）** を想定しています。
 
-現在は **UIのみ（モックデータ）** で動作します。掲載企業はすべて**架空のサンプル**です。
-Supabase の環境変数を設定すると、AI対話は Edge Function 経由で Claude を使います（失敗時はモックにフォールバック）。
+このブランチ（`claude/local-storage`）は **サーバーを使わず、ブラウザのローカルストレージだけで動く版** です。
+診断はブラウザ内のルールベースで行い、外部APIには一切通信しません。掲載企業はすべて**架空のサンプル**です。
 
 ## 技術スタック
 
@@ -17,8 +17,7 @@ Supabase の環境変数を設定すると、AI対話は Edge Function 経由で
 | コンポーネント | shadcn/ui（Radix UI） | `src/components/ui/`、`components.json` あり |
 | アイコン | lucide-react | |
 | 画像出力 | html-to-image | 就活軸カードの PNG 化 |
-| バックエンド（予定） | Supabase（Auth / Postgres / Storage / Edge Functions） | `@supabase/supabase-js` 導入済み |
-| AI | Claude（`claude-opus-5-5`）/ `@anthropic-ai/sdk` | `supabase/functions/career-chat`。APIキーはサーバー側のみ |
+| データ保存 | ブラウザの localStorage | `src/lib/storage.ts` にキーを集約 |
 
 ## 起動
 
@@ -37,7 +36,7 @@ npm run dev
 | Vercel | `vercel.json` |
 | Cloudflare Pages | `public/_redirects` |
 
-現在はモックで動くため環境変数は不要です。Supabase 接続後は `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` をホスティング側に設定してください。
+環境変数は不要です。
 
 ## サイトマップ
 
@@ -72,20 +71,28 @@ src/
 │  └─ card/        就活軸カード
 ├─ contexts/       AuthContext
 ├─ data/           マスターデータ（キャリアパス・会社特徴・質問）
-├─ lib/            supabase クライアント・ユーティリティ
+├─ lib/            ローカルストレージ・ユーティリティ
 ├─ pages/          各画面
 ├─ services/       データアクセス層（現在はモック）
 └─ types/          ドメイン型
-supabase/migrations/  テーブル定義・RLS（案）
 ```
 
-## Supabase 接続手順（予定）
+## ローカルストレージの構成
 
-1. `.env.example` を `.env.local` にコピーし、`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` を設定
-2. `supabase/migrations/0001_init.sql` を SQL Editor で実行
-3. 各サービスをモックから Supabase 実装に差し替え
-   - `authService.ts` → `supabase.auth.*`
-   - `diagnosisService.ts` → `diagnosis_results` テーブル
-   - `aiService.ts` → 実装済み。`supabase functions deploy career-chat` と `supabase secrets set ANTHROPIC_API_KEY=...` で有効化
-   - `SkillGapChecker` → `skill_checks` テーブル
-   - カード画像 → Storage `axis-cards` バケット
+すべて `career-navi:` プレフィックス付きで保存します（`src/lib/storage.ts`）。
+
+| キー | 内容 |
+| --- | --- |
+| `version` | 保存形式のバージョン |
+| `user` | 簡易ログインのプロフィール（パスワードは保存・照合しない） |
+| `results` | 診断結果の配列（新しい順） |
+| `skill-checks:{キャリアID}` | スキル・経験のチェック状態 |
+| `inquiries` | 大学向けお問い合わせ（デモ・外部送信なし） |
+
+マイページの「データの管理」から、JSONでの書き出しと全削除ができます。
+
+### この版の制約
+- データはその端末・そのブラウザの中だけ。別の端末と同期はできません
+- ログインは本人確認を伴わない簡易版
+- AIはルールベース（Claude との連携は、サーバー側でAPIキーを扱える `main` ブランチの構成で行う）
+- キャリアセンター管理画面・結果の共有は画面イメージのみ（他の学生のデータは集計できない）

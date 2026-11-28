@@ -12,7 +12,6 @@ export interface ScriptQuestion {
 
 /**
  * モック用の対話スクリプト。
- * Supabase 接続後は Edge Function（LLM）が次の質問を動的に生成する。
  */
 export const SCRIPT_QUESTIONS: ScriptQuestion[] = [
   {

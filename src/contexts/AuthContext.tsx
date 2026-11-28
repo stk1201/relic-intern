@@ -13,9 +13,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
-/**
- * Supabase 接続時は supabase.auth.onAuthStateChange で user を同期する。
- */
+/** ログイン状態はローカルストレージから復元する */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AppUser | null>(() => authService.getCurrentUser())
 

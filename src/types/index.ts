@@ -1,7 +1,6 @@
 /**
  * ドメイン型定義
- * Supabase 接続時は supabase/migrations のテーブル定義と 1:1 で対応させる。
- * （DB 側は snake_case、アプリ側は camelCase。変換は services 層で行う）
+ * ローカルストレージにはこの型のまま JSON で保存する。
  */
 
 /** 価値観の軸 */
@@ -106,8 +105,6 @@ export interface DiagnosisResult {
   keywords: string[]
   pathMatches: PathMatch[]
   traitIds: string[]
-  /** カード公開設定（Supabase では share_slug + is_public） */
-  isPublic: boolean
 }
 
 /* ---------- 認証 ---------- */
@@ -117,7 +114,7 @@ export interface AppUser {
   email: string
   nickname: string
   graduationYear: number | null
-  /** 大学の招待コードで紐づく（Supabase: profiles.university_id） */
+  /** 大学の招待コードで紐づく（デモ） */
   universityName: string | null
   /** キャリアセンターへの結果共有に同意しているか */
   shareWithCareerCenter: boolean
