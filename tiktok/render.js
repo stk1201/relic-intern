@@ -10,7 +10,7 @@ const fs = require('fs');
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
   await page.goto('file://' + path.join(dir, 'video.html'));
   await page.evaluate(() => document.fonts.ready);
-  const FPS = 30, DUR = 30;
+  const FPS = 30, DUR = 32;
   for (let i = 0; i < FPS * DUR; i++) {
     await page.evaluate(t => window.render(t), i / FPS);
     await page.screenshot({ path: path.join(out, `f${String(i).padStart(4, '0')}.jpg`), type: 'jpeg', quality: 92 });
